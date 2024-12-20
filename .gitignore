@@ -5,8 +5,15 @@
 __pycache__/
 *.swp
 
-# Django
+#db
 db.sqlite3
+docker
+
+static
+media
+
+# Django
+
 *.log
 media/
 staticfiles/
@@ -15,6 +22,7 @@ staticfiles/
 .env
 
 # Virtual environments
+.venv
 venv/
 env/
 *.egg-info/
