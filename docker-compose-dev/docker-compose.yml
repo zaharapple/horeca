@@ -1,0 +1,22 @@
+version: '3.9'
+
+services:
+  horeca:
+    image: postgres:15
+    container_name: horeca_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: very_secret_info
+      POSTGRES_DB: horeca
+    ports:
+      - "5439:5432"
+    volumes:
+      - postgres_data_pizza:/var/lib/postgresql/data
+    networks:
+      - django_network
+
+networks:
+  django_network:
+
+volumes:
+  postgres_data_pizza:
