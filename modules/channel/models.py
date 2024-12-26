@@ -1,12 +1,16 @@
 from django.db import models
 
-from modules.base.models import TimeStampeMixin
+from modules.channel.choices import ChannelStatus
 
 
-class Channel(models.Model, TimeStampeMixin):
+class Channel(models.Model):
     code = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
-    type = models.CharField(max_length=255)
+    status = models.CharField(
+        max_length=50,
+        choices=ChannelStatus.choices,
+        db_index=True,
+    )
     city = models.CharField(max_length=255)
     address = models.TextField(null=True, blank=True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
@@ -14,6 +18,9 @@ class Channel(models.Model, TimeStampeMixin):
     phone = models.CharField(max_length=15)
     active = models.BooleanField(default=True)
     base_language = models.CharField(max_length=255)
+    
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name

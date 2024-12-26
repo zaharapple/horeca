@@ -1,9 +1,7 @@
 from django.db import models
 
-from ..base.models import TimeStampeMixin
 
-
-class Customer(models.Model, TimeStampeMixin):
+class Customer(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
@@ -11,6 +9,9 @@ class Customer(models.Model, TimeStampeMixin):
     birthday = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=10, null=True, blank=True)
     phone = models.CharField(max_length=15, null=True, blank=True)
+    
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     @property
     def full_name(self):
