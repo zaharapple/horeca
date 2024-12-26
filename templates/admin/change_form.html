@@ -1,0 +1,33 @@
+{% extends "admin/change_form.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" type="text/admin/css" href="{% static 'admin/css/admin_custom.css' %}">
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('input[type="file"]').forEach(input => {
+            input.addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+
+                    const inputId = e.target.id;
+
+                    const previewId = inputId.replace('id_image', 'preview');
+
+                    const previewContainer = document.getElementById(previewId);
+
+                    reader.onload = function (e) {
+                        if (previewContainer) {
+                            previewContainer.src = e.target.result;
+                            previewContainer.style.display = 'block';
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

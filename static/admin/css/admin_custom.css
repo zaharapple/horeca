@@ -1,0 +1,20 @@
+.image-preview {
+    max-height: 100px;
+    max-width: 100px;
+    border: 1px solid #ddd;
+    margin-top: 5px;
+    cursor: pointer;
+}
+
+.image-popup {
+    display: none;
+    position: absolute;
+    z-index: 10;
+    max-height: 300px;
+    max-width: 300px;
+    border: 1px solid #aaa;
+}
+
+.image-container:hover .image-popup {
+    display: block;
+}
