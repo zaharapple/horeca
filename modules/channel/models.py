@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 
 from modules.channel.choices import ChannelStatus
@@ -24,6 +25,11 @@ class Channel(models.Model):
 
     def __str__(self):
         return self.name
+
+    def delete(self, *args, **kwargs):
+        if self.categories.exists():
+            raise ValidationError("Cannot delete channel because it has associated categories.")
+        super().delete(*args, **kwargs)
 
     class Meta:
         db_table = "channel"

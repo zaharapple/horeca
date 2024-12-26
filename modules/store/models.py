@@ -14,3 +14,10 @@ class Store(models.Model):
 
     class Meta:
         db_table = "store"
+
+    @classmethod
+    def get_by_code_or_default(cls, code):
+        store = cls.objects.filter(code=code).first()
+        if not store:
+            store = cls.objects.filter(is_default=True).first()
+        return store
