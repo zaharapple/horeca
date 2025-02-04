@@ -1,0 +1,13 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        {% block breadcrumbs %}
+        {% for breadcrumb in breadcrumbs %}
+            {% if breadcrumb.url %}
+                <li class="breadcrumb-item"><a href="{{ breadcrumb.url }}">{{ breadcrumb.name }}</a></li>
+            {% else %}
+                <li class="breadcrumb-item active" aria-current="page">{{ breadcrumb.name }}</li>
+            {% endif %}
+        {% endfor %}
+        {% endblock %}
+    </ol>
+</nav>

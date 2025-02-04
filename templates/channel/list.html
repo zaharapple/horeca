@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Select Channel{% endblock %}
+
+{% block content %}
+    <h1 class="text-center mb-4">Choose a Channel</h1>
+    <div class="row">
+        {% for channel in channels %}
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">{{ channel.name }}</h5>
+                        <h5 class="card-title">{{ channel.id }}</h5>
+                        <a href="#" class="btn btn-primary" onclick="window.location.href='{% url 'channel:detail' pk=channel.id %}'; return false;">Select</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

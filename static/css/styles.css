@@ -1,0 +1,141 @@
+body {
+    padding-top: 4.5rem;
+}
+
+.navbar {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.container {
+    margin-top: 1rem;
+}
+
+.breadcrumb {
+    background-color: transparent;
+    padding: 0.5rem 0;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.breadcrumb-item a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+    text-decoration: underline;
+}
+
+.breadcrumb-item.active {
+    color: #6c757d;
+    font-weight: bold;
+}
+
+.card {
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    will-change: transform, box-shadow;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Modal */
+.modal-body {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-header {
+    border-bottom: none;
+}
+
+.modal-footer {
+    border-top: none;
+}
+
+#productSizes .btn {
+    border: 2px solid #2E7D32;
+    color: #2E7D32;
+    background: transparent;
+    font-weight: bold;
+    transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+#productSizes .btn.active {
+    background: #2E7D32;
+    color: white;
+}
+
+#productIngredients {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: left;
+    align-items: center;
+    margin-top: 10px;
+    gap: 10px;
+}
+
+.ingredient {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    width: 70px;
+    height: 110px;
+    padding: 5px;
+    background: transparent;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out, border-color 0.3s ease-in-out;
+    border: 2px solid transparent;
+}
+
+.ingredient img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.ingredient p {
+    font-size: 12px;
+    margin: 2px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.ingredient .price-badge {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #2E7D32;
+    color: #2E7D32;
+    background: transparent;
+    padding: 3px 6px;
+    border-radius: 5px;
+    font-size: 12px;
+    transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+    white-space: nowrap;
+}
+
+.ingredient.selected .price-badge {
+    background-color: #2E7D32;
+    color: white;
+}
+
+.ingredient .price-badge span {
+    display: inline-block;
+    margin-left: 3px;
+}
+
+#productPrice {
+    font-size: 24px;
+    font-weight: bold;
+    color: #2E7D32 !important;
+}
