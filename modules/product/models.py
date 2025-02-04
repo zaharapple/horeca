@@ -2,14 +2,13 @@ import os
 
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models.signals import post_delete
 from django.core.validators import MinValueValidator
-from django.dispatch import receiver
+from django.templatetags.static import static
 
 from .choices import ProductStatus
-from ..base.forms import get_field_from_info
-from ..channel.models import Channel
-from ..store.models import Store
+from modules.base.forms import get_field_from_info
+from modules.channel.models import Channel
+from modules.store.models import Store
 
 
 class Category(models.Model):
@@ -19,6 +18,10 @@ class Category(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
+        return self.name
+
+    @property
+    def name(self):
         return get_field_from_info(self, 'info', 'name')
 
     def delete(self, *args, **kwargs):
@@ -72,12 +75,28 @@ class Product(models.Model):
     def __str__(self):
         return self.sku
 
+    @property
+    def name(self):
+        return get_field_from_info(self, 'info', 'name')
+
+    @property
+    def description(self):
+        return get_field_from_info(self, 'info', 'description')
+
+    @property
+    def product_info(self):
+        return get_field_from_info(self, 'info', 'info')
+
+    @property
+    def lowest_price(self):
+        return min([variant.price for variant in self.variants.all()])
+
     class Meta:
         db_table = "product"
 
     def get_preview_media(self):
         media = self.media.order_by('priority').first()
-        return media.image.url if media else None
+        return media.image.url if media else static('img/image-not-available.png')
 
 
 class ProductInfo(models.Model):
@@ -110,7 +129,6 @@ class ProductMediaGallery(models.Model):
     class Meta:
         db_table = "product_media_gallery"
 
-    # Override the delete method to delete the file
     def delete(self, *args, **kwargs):
         if self.image:
             if os.path.isfile(self.image.path):
@@ -126,16 +144,28 @@ class ProductExcludeChannel(models.Model):
 
     class Meta:
         db_table = "product_exclude_channel"
+        unique_together = ('channel', 'product')
 
 
 class Additive(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2, db_index=True, validators=[MinValueValidator(0.01)])
+    image = models.ImageField(upload_to='product_additive_images/', null=True, blank=True)
     
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
+        return self.name
+
+    @property
+    def name(self):
         return get_field_from_info(self, 'info', 'name')
+
+    def delete(self, *args, **kwargs):
+        if self.image:
+            if os.path.isfile(self.image.path):
+                os.remove(self.image.path)
+        super().delete(*args, **kwargs)
 
     class Meta:
         db_table = "additive"
@@ -176,6 +206,10 @@ class Package(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
+        return self.name
+
+    @property
+    def name(self):
         return get_field_from_info(self, 'info', 'name')
 
     class Meta:
@@ -206,6 +240,10 @@ class ProductVariant(models.Model):
 
     def __str__(self):
         return self.code
+
+    @property
+    def name(self):
+        return get_field_from_info(self, 'info', 'name')
 
     class Meta:
         db_table = "product_variant"

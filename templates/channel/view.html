@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+
+{% block category %}
+    <ul class="navbar-nav me-auto">
+        {% for category in categories %}
+            <li class="nav-item">
+                <a class="nav-link {% if selected_category == category %}active{% endif %}" 
+                   href="{% url 'channel:detail' pk=channel.id %}?category={{ category.id }}">
+                    {{ category.name }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block content %}
+    {% include 'channel/modal.html' %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'channel:home' %}">Home</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                {{ channel.name }}
+            </li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        {% if products %}
+            {% for product in products %}
+                <div class="col-12 col-sm-6 col-md-3 mb-4">
+                    <a href="#" class="text-decoration-none" data-id="{{ product.id }}">
+                        <div class="card shadow-sm h-100">
+                            <img src="{{ product.get_preview_media }}" 
+                                 class="card-img-top" 
+                                 alt="{{ product.name }}" 
+                                 style="height: 200px; object-fit: cover;">
+                            
+                            <div class="card-body">
+                                <h5 class="card-title text-dark">{{ product.name }}</h5>
+                            </div>
+
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">Price From: {{ product.lowest_price }} {{ channel.currency }}</li>
+                            </ul>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-center">No products found for this category.</p>
+        {% endif %}
+    </div>
+{% endblock %}
+
+
