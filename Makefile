@@ -4,7 +4,7 @@ PIP = .venv/bin/pip
 
 venv:
 	python3.12 -m venv .venv
-	$(PIP) install -r requirements.lock
+	. .venv/bin/activate && $(PIP) install -r requirements.lock
 
 install:
 	$(PIP) install -r requirements.lock
