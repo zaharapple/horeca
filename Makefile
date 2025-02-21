@@ -6,6 +6,9 @@ venv:
 	python3.12 -m venv .venv
 	. .venv/bin/activate && $(PIP) install -r requirements.lock
 
+requirements:
+	. .venv/bin/activate && pip-compile --extra=test --output-file=requirements.lock
+
 install:
 	$(PIP) install -r requirements.lock
 
