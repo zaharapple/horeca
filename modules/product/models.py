@@ -1,4 +1,5 @@
 import os
+from typing import Optional, Any
 
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -21,8 +22,13 @@ class Category(models.Model):
         return self.name
 
     @property
-    def name(self):
-        return get_field_from_info(self, 'info', 'name')
+    def name(self) -> Optional[Any]:
+        return get_field_from_info(
+            self,
+            related_name='info',
+            field_name='name'
+            #TODO: store code in future
+        )
 
     def delete(self, *args, **kwargs):
         if self.products.exists():
@@ -53,7 +59,7 @@ class CategoryChannel(models.Model):
     channel = models.ForeignKey(Channel, on_delete=models.CASCADE, related_name='categories')
 
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now=True) #TODO: dont needed
 
     class Meta:
         db_table = "category_channel"
@@ -119,7 +125,7 @@ class ProductMediaGallery(models.Model):
     image = models.ImageField(upload_to='product_images/')
     priority = models.PositiveSmallIntegerField(default=0)
     alt_text = models.CharField(max_length=255, null=True, blank=True)  # Text for SEO
-    
+
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -149,6 +155,7 @@ class ProductExcludeChannel(models.Model):
 
 class Additive(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2, db_index=True, validators=[MinValueValidator(0.01)])
+    #TODO: sale_price?
     image = models.ImageField(upload_to='product_additive_images/', null=True, blank=True)
     
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
@@ -175,7 +182,7 @@ class AdditiveInfo(models.Model):
     additive = models.ForeignKey(Additive, on_delete=models.CASCADE, related_name='info')
     store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name='additive_info')
     name = models.CharField(max_length=255)
-    
+
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
 
