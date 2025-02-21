@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'modules.order',
     'modules.product',
     'modules.store',
+    'modules.cart',
 ]
 
 MIDDLEWARE = [
@@ -76,6 +77,18 @@ DATABASES = {
         }
     }
 }
+REDIS_BASE_URL = "localhost"
+REDIS_PORT = "6375"
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": f"redis://{REDIS_BASE_URL}:{REDIS_PORT}/1"
+    }
+}
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
+
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [

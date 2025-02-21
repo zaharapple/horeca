@@ -55,6 +55,7 @@ class ChannelDetailView(ListView):
 def product_detail(request, pk):
     product = get_object_or_404(Product, pk=pk)
     product_data = {
+        'id': product.id,
         'name': product.name,
         'description': product.description,
         'variants': list(product.variants.values('id', 'price', 'code')),
@@ -62,6 +63,7 @@ def product_detail(request, pk):
         'images': [media.image.url for media in product.media.all()],
         'ingredients': [
             {
+                'id': additive.additive.id,
                 'name': additive.additive.name,
                 'price': str(additive.additive.price),
                 'image': additive.additive.image.url,
