@@ -36,6 +36,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'app.middlewares.InitialSessionKeyMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -82,7 +83,11 @@ REDIS_PORT = "6375"
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": f"redis://{REDIS_BASE_URL}:{REDIS_PORT}/1"
+        "LOCATION": f"redis://{env('REDIS_BASE_URL')}:{env('REDIS_PORT')}/1"
+    },
+    "cart_cache": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": f"redis://{env('REDIS_BASE_URL')}:{env('REDIS_PORT')}/2"
     }
 }
 

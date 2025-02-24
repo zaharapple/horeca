@@ -61,7 +61,7 @@ def product_detail(request, pk):
         'variants': list(product.variants.values('id', 'price', 'code')),
         'currency': product.category.channels.first().channel.currency,
         'images': [media.image.url for media in product.media.all()],
-        'ingredients': [
+        'additives': [
             {
                 'id': additive.additive.id,
                 'name': additive.additive.name,

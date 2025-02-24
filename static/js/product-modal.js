@@ -59,48 +59,48 @@ document.addEventListener('DOMContentLoaded', () => {
                         sizeContainer.appendChild(button);
                     });
 
-                    const ingredientsRow = document.getElementById('productIngredients');
-                    ingredientsRow.innerHTML = '';
-                    data.ingredients.forEach(ingredient => {
+                    const additivesRow = document.getElementById('productAdditives');
+                    additivesRow.innerHTML = '';
+                    data.additives.forEach(additive => {
                         const col = document.createElement('div');
-                        col.className = 'ingredient';
-                        col.dataset.ingredientId = ingredient.id;
+                        col.className = 'additive';
+                        col.dataset.additiveId = additive.id;
                         col.innerHTML = `
-                            <img src="${ingredient.image || 'https://via.placeholder.com/80'}" class="img-thumbnail" alt="${ingredient.name}">
-                            <p class="small">${ingredient.name}</p>
-                            <span class="price-badge btn btn-outline-primary" data-price="${ingredient.price}">
-                                +${ingredient.price} ${data.currency}
+                            <img src="${additive.image || 'https://via.placeholder.com/80'}" class="img-thumbnail" alt="${additive.name}">
+                            <p class="small">${additive.name}</p>
+                            <span class="price-badge btn btn-outline-primary" data-price="${additive.price}">
+                                +${additive.price} ${data.currency}
                             </span>
                         `;
                         const priceBadge = col.querySelector('.price-badge');
                         col.addEventListener('click', function () {
-                            const ingredientId = parseInt(col.dataset.ingredientId);
-                            if (selectedExtras.has(ingredientId)) {
-                                selectedExtras.delete(ingredientId);
+                            const additiveId = parseInt(col.dataset.additiveId);
+                            if (selectedExtras.has(additiveId)) {
+                                selectedExtras.delete(additiveId);
                                 col.classList.remove('selected');
                                 priceBadge.classList.remove('btn-primary', 'text-white');
                                 priceBadge.classList.add('btn-outline-primary');
                             } else {
-                                selectedExtras.add(ingredientId);
+                                selectedExtras.add(additiveId);
                                 col.classList.add('selected');
                                 priceBadge.classList.add('btn-primary', 'text-white');
                                 priceBadge.classList.remove('btn-outline-primary');
                             }
                             updateTotalPrice();
                         });
-                        ingredientsRow.appendChild(col);
+                        additivesRow.appendChild(col);
                     });
 
                     function updateTotalPrice() {
                         let totalPrice = basePrice;
-                        document.querySelectorAll('.ingredient.selected .price-badge').forEach(el => {
+                        document.querySelectorAll('.additive.selected .price-badge').forEach(el => {
                             totalPrice += parseFloat(el.dataset.price);
                         });
                         priceElement.textContent = `${totalPrice.toFixed(2)} ${data.currency}`;
                     }
 
                     document.getElementById('addToCartBtn').onclick = () => {
-                        const ingredientIds = [...selectedExtras].filter(id => !isNaN(id)); // Убираем NaN
+                        const additiveIds = [...selectedExtras].filter(id => !isNaN(id));
 
                         fetch(`/cart/add/${productId}/`, {
                             method: "POST",
@@ -110,20 +110,21 @@ document.addEventListener('DOMContentLoaded', () => {
                             },
                             body: new URLSearchParams({
                                 variant_id: selectedVariant,
-                                ingredient_ids: ingredientIds.length > 0 ? ingredientIds.join(",") : "",
+                                additive_ids: additiveIds.length > 0 ? additiveIds.join(",") : "",
                                 quantity: 1
                             })
                         }).then(response => response.json())
                           .then(() => {
-                              fetchCart(); // Обновляем корзину
+                              fetchCart();
 
-                              // **Правильное закрытие модального окна**
-                              let modalEl = document.getElementById('productModal');
-                              let modalInstance = bootstrap.Modal.getInstance(modalEl);
+                              // Ensure modal is closed properly
+                              const modalEl = document.getElementById('productModal');
+                              const modalInstance = bootstrap.Modal.getInstance(modalEl);
                               if (modalInstance) {
                                   modalInstance.hide();
                               }
 
+                              // Remove leftover modal backdrop
                               document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
 
                               setTimeout(() => {
@@ -163,10 +164,15 @@ function fetchCart() {
             const cartItems = document.getElementById("cartItems");
             const cartTotal = document.getElementById("cartTotal");
 
+            if (!cartItems || !cartCount || !cartTotal) {
+                console.error("Cart elements not found in DOM!");
+                return;
+            }
+
             cartItems.innerHTML = "";
             let total = 0;
 
-            if (data.cart.length === 0) {
+            if (!data.cart || data.cart.length === 0) {
                 cartItems.innerHTML = `<p class="text-center text-muted">Your cart is empty.</p>`;
                 cartTotal.textContent = "0.00 USD";
                 cartCount.textContent = "0";
@@ -177,7 +183,7 @@ function fetchCart() {
                 total += parseFloat(item.total_price);
                 cartItems.innerHTML += `
                     <div class="cart-item">
-                        <h6>${item.name} (${item.size})</h6>
+                        <h6>${item.name} (Size: ${item.size})</h6>
                         <p>Quantity: ${item.quantity}</p>
                         <p>Price: $${item.total_price}</p>
                     </div>
@@ -189,3 +195,7 @@ function fetchCart() {
         })
         .catch(error => console.error("Error fetching cart:", error));
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    fetchCart();
+});

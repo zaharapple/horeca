@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
             cartItems.innerHTML += `
                 <div class="cart-item">
                     <h6>${item.name} (${item.size})</h6>
-                    <p>Ingredients: ${item.ingredients.join(", ") || "None"}</p>
+                    <p>Additives: ${item.additives.join(", ") || "None"}</p>
                     <p>Price: $${item.total_price.toFixed(2)}</p>
                     <div class="cart-controls">
                         <button class="btn btn-sm btn-outline-primary change-qty" data-id="${item.id}" data-action="decrease">-</button>

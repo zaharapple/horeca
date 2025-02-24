@@ -1,45 +1,42 @@
-import redis
 import json
-from django.conf import settings
+from django.core.cache import caches
 
 
 class Cart:
-    EXPIRE_CART_TIME = 60 * 60 * 24
+    EXPIRE_CART_TIME = 7 * 24 * 60 * 60
 
     def __init__(self, request):
         self.session = request.session
-        self.redis = redis.Redis(host=settings.REDIS_BASE_URL, port=settings.REDIS_PORT, db=1)
-        user_id = request.user.id if request.user.is_authenticated else request.session.session_key
+        self.cart_cache = caches["cart_cache"]
+        user_id = request.user.id if request.user.is_authenticated else self.session.session_key
         self.cart_key = f"cart:{user_id}"
 
-        self.redis.expire(self.cart_key, self.EXPIRE_CART_TIME)
+        self.cart_cache.touch(self.cart_key, self.EXPIRE_CART_TIME)
 
     def add(self, cart_data):
-        cart_db = self.redis.hget(self.cart_key, cart_data.id)
+        cart = self._get_cart()
 
-        if cart_db:
-            cart_item = json.loads(cart_db)
-            cart_item["quantity"] += cart_data.quantity
+        exist_product = cart.get(str(cart_data['variant_id']))
+        if exist_product:
+
+            cart[str(cart_data['variant_id'])]["quantity"] += cart_data['quantity']  # TODO: If no same variants
         else:
-            cart_item = {
-                "id": cart_data.id,
-                "name": cart_data.name,
-                "size": cart_data.variant['id'],
-                "ingredients": 'sss',
-                "quantity": cart_data.quantity,
-                "price": float(cart_data.price),
-                "total_price": f"{float(cart_data.price * cart_data.quantity):.2f}",
-            }
+            cart[cart_data['variant_id']] = cart_data
 
-        self.redis.hset(self.cart_key, cart_data.id, json.dumps(cart_item))
+        self.cart_cache.set(self.cart_key, json.dumps(cart), timeout=self.EXPIRE_CART_TIME)
 
     def remove(self, product_id):
-        self.redis.hdel(self.cart_key, product_id)
+        cart = self._get_cart()
+        if str(product_id) in cart:
+            del cart[str(product_id)]
+            self.cart_cache.set(self.cart_key, json.dumps(cart), timeout=self.EXPIRE_CART_TIME)
 
     def get_items(self):
-        cart_data = self.redis.hgetall(self.cart_key)
-        items = [json.loads(value) for value in cart_data.values()]
-        return items
+        return list(self._get_cart().values())
 
     def clear(self):
-        self.redis.delete(self.cart_key)
+        self.cart_cache.delete(self.cart_key)
+
+    def _get_cart(self):
+        cart_data = self.cart_cache.get(self.cart_key)
+        return json.loads(cart_data) if cart_data else {}
