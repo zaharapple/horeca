@@ -4,6 +4,8 @@
 #
 #    pip-compile --extra=test --output-file=requirements.lock
 #
+annotated-types==0.7.0
+    # via pydantic
 asgiref==3.8.1
     # via
     #   Horeca (pyproject.toml)
@@ -22,6 +24,10 @@ pillow==11.0.0
     # via Horeca (pyproject.toml)
 psycopg2-binary==2.9.10
     # via Horeca (pyproject.toml)
+pydantic==2.10.6
+    # via Horeca (pyproject.toml)
+pydantic-core==2.27.2
+    # via pydantic
 redis==5.2.1
     # via
     #   Horeca (pyproject.toml)
@@ -31,4 +37,7 @@ sqlparse==0.5.3
     #   Horeca (pyproject.toml)
     #   django
 typing-extensions==4.12.2
-    # via asgiref
+    # via
+    #   asgiref
+    #   pydantic
+    #   pydantic-core
